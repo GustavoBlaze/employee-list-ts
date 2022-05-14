@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { SafeAreaView, StyleSheet, Text } from "react-native";
+import { SafeAreaView, StyleSheet, View, Text, FlatList } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const banks: Bank[] = [
@@ -44,12 +44,25 @@ const ListEmployees: React.FC = () => {
       .then(setEmployees);
   }, []);
 
+  return (
+    <SafeAreaView style={styles.container}>
+      <FlatList
+        data={employees}
+        keyExtractor={(item) => item?.id as string}
+        renderItem={({ item }) => (
+          <View style={styles.card}>
+            {Object.entries(item).map(([key, value]) => (
+              <Text key={key}>{key}: {value}</Text>
+            ))}
 
-  console.log("ok");
-
-  return (<SafeAreaView>
-    <Text>Lista de funcionários</Text>
-  </SafeAreaView>);
+            {Object.entries(getBankById(item?.bankAndAgency?.split("/")[0])).map(([key, value]) => (
+              <Text key={key}>{key}: {value}</Text>
+            ))}
+          </View>
+        )}
+      />
+    </SafeAreaView>
+  )
 };
 
 export const styles = StyleSheet.create({
@@ -58,6 +71,13 @@ export const styles = StyleSheet.create({
     width: "100%",
     backgroundColor: "#f0f2f5",
   },
+
+  card: {
+    backgroundColor: "#fff",
+    marginBottom: 16,
+    padding: 16,
+    borderRadius: 8,
+  }
 });
 
 export default ListEmployees;
